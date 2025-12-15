@@ -102,11 +102,10 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # ============================
 if env("DATABASE_URL", default=None):
     DATABASES = {
-        'default': env.db(
-            "DATABASE_URL",
-            engine="django.db.backends.postgresql",
-            ssl_require=True
-        )
+        'default': env.db("DATABASE_URL")
+    }
+    DATABASES['default']['OPTIONS'] = {
+        'sslmode': 'require'
     }
 else:
     DATABASES = {
