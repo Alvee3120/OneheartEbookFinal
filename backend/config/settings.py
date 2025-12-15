@@ -242,8 +242,23 @@ EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
 DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="no-reply@oneheartbd.com")
 EMAIL_LOGO_URL = env("EMAIL_LOGO_URL", default="")
 
+import os
+from django.contrib.auth import get_user_model
 
-print("DB NAME:", DATABASES['default']['NAME'])
-print("DB USER:", DATABASES['default']['USER'])
-print("DB PASSWORD:", DATABASES['default']['PASSWORD'])
-print("DB HOST:", DATABASES['default']['HOST'])
+if os.getenv("CREATE_SUPERUSER") == "1":
+    User = get_user_model()
+    username = os.getenv("ADMIN_USERNAME")
+    email = os.getenv("ADMIN_EMAIL")
+    password = os.getenv("ADMIN_PASSWORD")
+
+    if username and password:
+        if not User.objects.filter(username=username).exists():
+            User.objects.create_superuser(
+                username=username,
+                email=email,
+                password=password
+            )
+            print("✅ Superuser created")
+        else:
+            print("ℹ️ Superuser already exists")
+
